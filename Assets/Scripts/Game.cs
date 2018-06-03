@@ -8,16 +8,31 @@ public class Game : MonoBehaviour {
 
     public enum Player
     {
+        None,
         FirstPlayer,
         SecondPlayer
     }
+
+    public enum GameState
+    {
+        Playing,
+        GameOver
+    }
+
+    GameState gameState = GameState.Playing;
 
     [SerializeField]
     Toggle playerOneTurnView;
     [SerializeField]
     Toggle playerTwoTurnView;
+    [SerializeField]
+    GameFieldManager gameFieldManager;
+    [SerializeField]
+    Image winPanel;
+    [SerializeField]
+    Text winText;
 
-    Player currentPlayer;
+    Player currentPlayer = Player.FirstPlayer;
     public Player CurrentPlayer
     {
         get
@@ -36,7 +51,85 @@ public class Game : MonoBehaviour {
         currentPlayer = Player.SecondPlayer;
     }
 
+    public void Restart()
+    {
+        gameFieldManager.Clear();
+        SetPlayerOneTurn();
+        ShowCurrentPlayer();
+        gameState = GameState.Playing;
+    }
+
     internal void PressedCell(Cell cell)
     {
+        if(gameFieldManager == null)
+        {
+            Debug.LogWarning("Game field manager is not set");
+            return;
+        }
+
+        if(gameState == GameState.GameOver)
+        {
+            return;
+        }
+
+        gameFieldManager.SetCellPlayer(cell, currentPlayer);
+        if(gameFieldManager.HasFilledLine())
+        {
+            gameState = GameState.GameOver;
+            ShowCurrentPlayerWin();
+            return;
+        }
+
+        SetNextPlayerTurn();
+    }
+
+    private void ShowCurrentPlayerWin()
+    {
+        winPanel.gameObject.SetActive(true);
+
+        switch (currentPlayer)
+        {
+            case Player.FirstPlayer:
+                winText.text = "First"; break;
+            case Player.SecondPlayer:
+                winText.text = "Second"; break;
+            default:
+                break;
+        }
+    }
+
+    private void SetNextPlayerTurn()
+    {
+        SetNextPlayer();
+        ShowCurrentPlayer();
+    }
+
+    private void SetNextPlayer()
+    {
+        switch (currentPlayer)
+        {
+            case Player.FirstPlayer:
+                currentPlayer = Player.SecondPlayer; break;
+            case Player.SecondPlayer:
+                currentPlayer = Player.FirstPlayer;  break;
+            default:
+                break;
+        }
+    }
+
+    private void ShowCurrentPlayer()
+    {
+        playerOneTurnView.isOn = false;
+        playerTwoTurnView.isOn = false;
+
+        switch (currentPlayer)
+        {
+            case Player.FirstPlayer:
+                playerOneTurnView.isOn = true; break;
+            case Player.SecondPlayer:
+                playerTwoTurnView.isOn = true; break;
+            default:
+                break;
+        }
     }
 }

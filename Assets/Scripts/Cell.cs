@@ -17,9 +17,12 @@ public class Cell : MonoBehaviour, IPointerDownHandler {
     Image image;
 
     [SerializeField]
-    int row = 0;
+    int row;
+    public int Row { get { return row; } }
+
     [SerializeField]
-    int col = 0;
+    int col;
+    public int Column { get { return col; } }
 
     [SerializeField]
     Game game;
@@ -34,16 +37,7 @@ public class Cell : MonoBehaviour, IPointerDownHandler {
     [SerializeField]
     CellState state;
 
-    [SerializeField]
-    Game.Player owner;
-
-	void Start ()
-    {
-		
-	}
-
-
-    CellState State
+    public CellState State
     {
         get
         {
@@ -55,6 +49,28 @@ public class Cell : MonoBehaviour, IPointerDownHandler {
             UpdateCellView();
         }
     }
+
+    [SerializeField]
+    Game.Player owner;
+
+    public Game.Player Owner
+    {
+        get
+        {
+            return owner;
+        }
+        set
+        {
+            owner = value;
+        }
+    }
+
+
+	void Start ()
+    {
+		
+	}
+
 
     private void UpdateCellView()
     {
@@ -103,6 +119,9 @@ public class Cell : MonoBehaviour, IPointerDownHandler {
 
     void IPointerDownHandler.OnPointerDown(PointerEventData eventData)
     {
+        if (state == CellState.On)
+            return;
+
         owner = game.CurrentPlayer;
         State = CellState.On;
         game.PressedCell(this);
