@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 public class GameFieldManager : MonoBehaviour {
@@ -67,6 +68,19 @@ public class GameFieldManager : MonoBehaviour {
         return false;
     }
 
+    internal bool NoMoreMoves()
+    {
+        //if it we have problem with performance - this linq can be changed to array
+        int count = (from Game.Player cellPlayer in cellPlayers
+                     where cellPlayer == Game.Player.None
+                     select cellPlayer)
+            .Count();
+
+        Debug.LogFormat("Free count:{0}", count);
+
+        return count == 0;
+    }
+
     internal void Clear()
     {
         for (int i = 0; i < cells.Length; i++)
@@ -98,8 +112,6 @@ public class GameFieldManager : MonoBehaviour {
                 if (cellPlayers[r, c] == Game.Player.SecondPlayer)
                     secondColCount += 1;
             }
-
-            Debug.LogFormat("row {0} F:{1} S:{2}", r, firstColCount, secondColCount);
 
             if (firstColCount == COL_COUNT)
                 return true;

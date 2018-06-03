@@ -31,6 +31,8 @@ public class Game : MonoBehaviour {
     Image winPanel;
     [SerializeField]
     Text winText;
+    [SerializeField]
+    Image drawPanel;
 
     Player currentPlayer = Player.FirstPlayer;
     public Player CurrentPlayer
@@ -80,11 +82,35 @@ public class Game : MonoBehaviour {
             return;
         }
 
+        if(gameFieldManager.NoMoreMoves())
+        {
+            gameState = GameState.GameOver;
+            ShowPlayersDraw();
+            return;
+        }
+
         SetNextPlayerTurn();
+    }
+
+    private void ShowPlayersDraw()
+    {
+        if(drawPanel == null)
+        {
+            Debug.LogWarning("Draw panel is not set");
+            return;
+        }
+
+        drawPanel.gameObject.SetActive(true);
     }
 
     private void ShowCurrentPlayerWin()
     {
+        if(winPanel == null)
+        {
+            Debug.LogWarning("Win panel is not set");
+            return;
+        }
+
         winPanel.gameObject.SetActive(true);
 
         switch (currentPlayer)
