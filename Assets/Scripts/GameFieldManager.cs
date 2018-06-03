@@ -74,6 +74,14 @@ public class GameFieldManager : MonoBehaviour {
             cells[i].State = Cell.CellState.Off;
             cells[i].Owner = Game.Player.None;
         }
+
+        for (int r = 0; r < ROW_COUNT; r++)
+        {
+            for (int c = 0; c < COL_COUNT; c++)
+            {
+                cellPlayers[r, c] = Game.Player.None;
+            }
+        }
     }
 
     private bool CheckRowFilled()
